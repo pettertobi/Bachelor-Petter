@@ -1,22 +1,51 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
-def fullarea(r1,r2):
-    area = 4*np.pi*(r1**2 + r2**2)
+def areasphere(r1):
+    area = 4*np.pi*r1**2
     return area
 
-def capsofsphere(r1,r2,d):
-    if d == 0 and r1>=r2:
-        areacos = 4*np.pi*r2**2
-    elif d== 0 and r2>r1:
-        areacos = 4*np.pi*r1**2
-    elif d >= (r1+r2):
-        areacos = 0
-    elif d <= abs(r1-r2):
-        areacos = 0
-    else:
-        areacos = 2*np.pi*r1**2*(1+((r2**2-r1**2-d**2)/(2*r1*d))) + 2*np.pi*r2**2*(1+((r1**2-r2**2-d**2)/(2*r2*d)))
-    return abs(areacos)
+def areaspheres(r1,r2):
+    i = areasphere(r1) + areasphere(r2)
+    return i
 
-def totalarea(r1,r2,d):
-    return (fullarea(r1,r2) - capsofsphere(r1,r2,d))
+def heightcap(r1,r2,d): #intersects if abs(r1-r2) < d < r1+r2 #does not intersect if abs (r1-r2) >= d >= r1+r2 
+    if r1 <= r2:
+        if abs(r1-r2) < d < (r1+r2):
+            a = (r1**2-r2**2+d**2)/(2*d)
+        elif (r1-r2) > d > -(r1+r2):
+            a = -(r1**2-r2**2+d**2)/(2*d)
+        
+        elif (r1-r2) <= d <= abs(r1-r2):
+            a = -r1
+        
+        else: a = r1
+        b = r1-a
+        return b
     
+    elif r1 > r2:
+        if (r1-r2) < d < (r1+r2):
+            a = (r1**2-r2**2+d**2)/(2*d)
+        elif -(r1-r2)> d >-(r1+r2):
+            a = -(r1**2-r2**2+d**2)/(2*d)
+        elif (r1-r2) >= d >= (r1-r2):
+            a = r1
+        else: a = r1    
+        b = r1-a        
+        return b 
+
+def areacap(r1,r2,d):
+    f = 2*np.pi*r1*heightcap(r1,r2,d)
+    return abs(f)
+
+def diffarea(r1,r2,d):
+    g = areasphere(r1)-areacap(r1,r2,d)
+    return g
+
+def combarea(r1,r2,d):
+    if r1 == r2 and d == 0:
+        f = 4*np.pi*r1**2
+        return f
+    
+    else: f = diffarea(r1,r2,d) + diffarea(r2,r1,d)
+    return f
