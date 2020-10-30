@@ -10,6 +10,7 @@ def areaspheres(r1,r2):
     return i
 
 def heightcap(r1,r2,d): #intersects if abs(r1-r2) < d < r1+r2 #does not intersect if abs (r1-r2) >= d >= r1+r2 
+   #Calculates the value from the intersection to the end of the sphere 
     if r1 <= r2:
         if abs(r1-r2) < d < (r1+r2):
             a = (r1**2-r2**2+d**2)/(2*d)
@@ -34,18 +35,15 @@ def heightcap(r1,r2,d): #intersects if abs(r1-r2) < d < r1+r2 #does not intersec
         b = r1-a        
         return b 
 
-def areacap(r1,r2,d):
-    f = 2*np.pi*r1*heightcap(r1,r2,d)
-    return abs(f)
+def areacap(r1,h): #calculates the surface area of the cap of the sphere. h is calculated in heightcap function
+    f = 2*np.pi*r1*h
+    return f
 
-def diffarea(r1,r2,d):
-    g = areasphere(r1)-areacap(r1,r2,d)
+def diffarea(r1,h): #calculates the area of rest of the sphere
+    g = areasphere(r1)-areacap(r1,h)
     return g
 
-def combarea(r1,r2,d):
-    if r1 == r2 and d == 0:
-        f = 4*np.pi*r1**2
-        return f
-    
-    else: f = diffarea(r1,r2,d) + diffarea(r2,r1,d)
-    return f
+def combarea(r1,r2,h1,h2):
+    j = diffarea(r1,h1) + diffarea(r2,h2)
+    return j
+
