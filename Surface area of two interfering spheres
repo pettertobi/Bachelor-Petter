@@ -1,49 +1,61 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def areasphere(r1):
-    area = 4*np.pi*r1**2
-    return area
-
-def areaspheres(r1,r2):
-    i = areasphere(r1) + areasphere(r2)
-    return i
-
 def heightcap(r1,r2,d): #intersects if abs(r1-r2) < d < r1+r2 #does not intersect if abs (r1-r2) >= d >= r1+r2 
-   #Calculates the value from the intersection to the end of the sphere 
+   #Calculates the height of the cap of the sphere
     if r1 <= r2:
         if abs(r1-r2) < d < (r1+r2):
-            a = (r1**2-r2**2+d**2)/(2*d)
+           alpha = np.arccos((r1**2+d**2-r2**2)/(2*r1*d))
+           h1 = np.cos(alpha)*r1
+           a = r1-h1
+           return a
         elif (r1-r2) > d > -(r1+r2):
-            a = -(r1**2-r2**2+d**2)/(2*d)
+            alpha = np.arccos((r1**2+d**2-r2**2)/(2*r1*d))
+            h1 = -np.cos(alpha)*r1
+            a = r1-h1
+            return a
         
         elif (r1-r2) <= d <= abs(r1-r2):
-            a = -r1
+            h1 = -r1
+            a = r1-h1
+            return a
         
-        else: a = r1
-        b = r1-a
-        return b
-    
+        else:
+            h1 = r1
+            a = r1-h1
+            return a
     elif r1 > r2:
         if (r1-r2) < d < (r1+r2):
-            a = (r1**2-r2**2+d**2)/(2*d)
-        elif -(r1-r2)> d >-(r1+r2):
-            a = -(r1**2-r2**2+d**2)/(2*d)
-        elif (r1-r2) >= d >= (r1-r2):
-            a = r1
-        else: a = r1    
-        b = r1-a        
-        return b 
+           alpha = np.arccos((r1**2+d**2-r2**2)/(2*r1*d))
+           h1 = np.cos(alpha)*r1
+           a = r1-h1
+           return a
+        elif -(r1+r2) < d < -abs(r1-r2):
+            alpha = np.arccos((r1**2+d**2-r2**2)/(2*r1*d))
+            h1 = -np.cos(alpha)*r1
+            a = r1-h1
+            return a
+        elif (r1-r2) >= d >= -abs(r1-r2):
+            h1 = r1
+            a = r1-h1
+            return a
+        else:     
+            h1 = r1
+            a = r1-h1
+            return a
 
-def areacap(r1,h): #calculates the surface area of the cap of the sphere. h is calculated in heightcap function
+def areacap(r1,h):
     f = 2*np.pi*r1*h
-    return f
+    return abs(f)
 
-def diffarea(r1,h): #calculates the area of rest of the sphere
-    g = areasphere(r1)-areacap(r1,h)
+def diffarea(r1,h):
+    g = 4*np.pi*r1**2-areacap(r1,h)
     return g
 
-def combarea(r1,r2,h1,h2):
-    j = diffarea(r1,h1) + diffarea(r2,h2)
-    return j
 
+def area(r1,r2,d):
+    a = 4*np.pi*(r1**2+r2**2)
+    b = 2*np.pi*r1*heightcap(r1,r2,d)
+    c = 2*np.pi*r2*heightcap(r2,r1,d)
+    f = a-b-c
+    return f
